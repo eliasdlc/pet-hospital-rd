@@ -20,8 +20,8 @@
   --color-warm-gray: #F4F2EE;
   --color-line: #E6E2DA;
   --color-muted-brand: #5A6478;
-  --color-whatsapp: #25D366;
-  --color-whatsapp-deep: #1FAA52;
+  --color-instagram: #E1306C;
+  --color-instagram-deep: #C13584;
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -120,12 +120,12 @@
   animation: ring-anim 2.4s ease-out infinite;
 }
 
-.wa-float-pulse::after {
+.ig-float-pulse::after {
   content: "";
   position: absolute;
   inset: -2px;
   border-radius: 50%;
-  border: 2px solid #25D366;
+  border: 2px solid #E1306C;
   opacity: 0.5;
   animation: pulse-ring 2s ease-out infinite;
 }

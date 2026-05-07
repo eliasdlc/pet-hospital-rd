@@ -54,9 +54,13 @@ export default function Contact() {
   const [pname, setPname] = useState("");
   const [reason, setReason] = useState("");
   const [errors, setErrors] = useState<Record<string, boolean>>({});
-  const [success, setSuccess] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Build the message template from current form values (used for live preview & clipboard).
+  const buildMessage = () =>
+    `¡Hola Pet Hospital RD! 👋\n\nSoy ${fname || "[tu nombre]"} y quisiera agendar una cita.\n\n🐾 Mascota: ${pname || "[nombre mascota]"} (${petType})\n📋 Motivo: ${reason || "[motivo de consulta]"}\n\n¡Gracias!`;
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, boolean> = {};
     if (!fname.trim()) newErrors.fname = true;
@@ -68,14 +72,19 @@ export default function Contact() {
       return;
     }
 
-    const message = `¡Hola Pet Hospital RD! 👋\n\nSoy *${fname}* y quisiera agendar una cita.\n\n🐾 Mascota: *${pname}* (${petType})\n📋 Motivo: ${reason}\n\n¡Gracias!`;
-    const url = `https://wa.me/18098502143?text=${encodeURIComponent(message)}`;
+    // Copy the formatted message so the client can paste it directly into Instagram DM.
+    try {
+      await navigator.clipboard.writeText(buildMessage());
+    } catch {
+      // Clipboard API not available (e.g. non-secure context) — proceed anyway.
+    }
 
-    setSuccess(true);
+    setCopied(true);
+    // Small delay so the success state is visible before the tab switches.
     setTimeout(() => {
-      window.open(url, "_blank");
-      setTimeout(() => setSuccess(false), 1200);
-    }, 400);
+      window.open("https://ig.me/m/pethospitalrd", "_blank");
+      setTimeout(() => setCopied(false), 3000);
+    }, 350);
   };
 
   const clearError = (field: string) => {
@@ -111,59 +120,50 @@ export default function Contact() {
               initial={{ opacity: 0, y: 16 }}
               animate={sideInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.9, delay: 0.16, ease: [0.2, 0.6, 0.2, 1] }}
-              className="text-[#5A6478] text-[17px] leading-[1.6] mb-9 max-w-[440px]"
+              className="text-[#5A6478] text-[17px] leading-[1.6] mb-8 max-w-[440px]"
             >
-              Llena el formulario y te respondemos directamente por WhatsApp en pocos minutos. Si es una emergencia, llámanos primero.
+              Llena el formulario y presiona el botón — tu mensaje se{" "}
+              <strong className="text-[#0D1F3C]">copia automáticamente</strong> al portapapeles.
+              Solo ábrelo en Instagram y pégalo. ¡Listo!
             </motion.p>
 
-            <div className="flex flex-col gap-[18px]">
-              {[
-                {
-                  href: "https://wa.me/18098502143",
-                  icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
-                  label: "809 850 2143",
-                  sub: "WhatsApp · Lun a Dom",
-                  delay: 0.24,
-                },
-                {
-                  href: undefined,
-                  icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>,
-                  label: "Lunes a Viernes · 8am – 10pm",
-                  sub: "Sábados y Domingos · horario reducido",
-                  delay: 0.24,
-                },
-                {
-                  href: undefined,
-                  icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>,
-                  label: "Calle 3, esq. Onésimo Jiménez",
-                  sub: "Los Jardines Metropolitanos, Santiago",
-                  delay: 0.24,
-                },
-              ].map((item, i) => {
-                const Comp = item.href ? "a" : "div";
-                return (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={sideInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.7, delay: item.delay + i * 0.04, ease: [0.2, 0.6, 0.2, 1] }}
-                  >
-                    <Comp
-                      {...(item.href ? { href: item.href, target: "_blank", rel: "noopener" } : {})}
-                      className="flex gap-4 items-start text-[15px] text-[#0D1F3C] hover:text-[#226B54] transition-colors"
-                    >
-                      <span className="w-11 h-11 rounded-xl bg-white border border-[#E6E2DA] grid place-items-center flex-shrink-0 text-[#2D8C6E]">
-                        {item.icon}
-                      </span>
-                      <div>
-                        <strong className="block font-semibold mb-0.5">{item.label}</strong>
-                        <span className="text-[#5A6478] text-[14px]">{item.sub}</span>
-                      </div>
-                    </Comp>
-                  </motion.div>
-                );
-              })}
-            </div>
+            {/* Live message preview */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={sideInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.26, ease: [0.2, 0.6, 0.2, 1] }}
+              className="bg-white border border-[#E6E2DA] rounded-2xl p-5 mb-6"
+              style={{ boxShadow: "0 4px 20px -8px rgba(13,31,60,0.12)" }}
+            >
+              <p className="text-[11px] tracking-[0.16em] uppercase font-semibold text-[#2D8C6E] mb-3">Vista previa del mensaje</p>
+              <div className="bg-[#FAF9F6] rounded-xl p-4 text-[14px] text-[#0D1F3C] leading-[1.7] whitespace-pre-wrap font-mono">
+                {buildMessage()}
+              </div>
+            </motion.div>
+
+            {/* Contact info row */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={sideInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.7, delay: 0.36, ease: [0.2, 0.6, 0.2, 1] }}
+              className="flex flex-col gap-3"
+            >
+              <a
+                href="tel:+18098502143"
+                className="flex gap-3 items-center text-[14px] text-[#0D1F3C] hover:text-[#226B54] transition-colors"
+              >
+                <span className="w-9 h-9 rounded-lg bg-white border border-[#E6E2DA] grid place-items-center flex-shrink-0 text-[#2D8C6E]">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                </span>
+                <span><strong className="font-semibold">809 850 2143</strong> <span className="text-[#5A6478]">· Emergencias</span></span>
+              </a>
+              <div className="flex gap-3 items-center text-[14px] text-[#5A6478]">
+                <span className="w-9 h-9 rounded-lg bg-white border border-[#E6E2DA] grid place-items-center flex-shrink-0 text-[#2D8C6E]">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                </span>
+                <span>Calle 3, esq. Onésimo Jiménez, Los Jardines Metropolitanos</span>
+              </div>
+            </motion.div>
           </div>
 
           {/* Form */}
@@ -255,25 +255,33 @@ export default function Contact() {
             {/* Submit */}
             <button
               type="submit"
-              className="w-full mt-2 py-[18px] px-6 rounded-[14px] bg-[#25D366] text-white text-[15px] font-semibold inline-flex items-center justify-center gap-3 transition-all duration-200 hover:bg-[#1FAA52] hover:-translate-y-px hover:shadow-[0_14px_28px_-12px_rgba(37,211,102,0.7)] shadow-[0_8px_22px_-12px_rgba(37,211,102,0.7)]"
+              className="w-full mt-2 py-[18px] px-6 rounded-[14px] text-white text-[15px] font-semibold inline-flex items-center justify-center gap-3 transition-all duration-200 hover:-translate-y-px"
+              style={{
+                background: "linear-gradient(135deg, #f58529 0%, #dd2a7b 50%, #8134af 100%)",
+                boxShadow: "0 8px 22px -12px rgba(225,48,108,0.7)",
+              }}
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.4-1.5-.9-.8-1.5-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.7.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.7.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3z M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.1-1.3c1.4.8 3.1 1.3 4.9 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/>
+              {/* Instagram logo */}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
               </svg>
-              Enviar por WhatsApp
+              Copiar mensaje y abrir Instagram
             </button>
 
-            {/* Success message */}
-            {success && (
+            {/* Success / copied feedback */}
+            {copied && (
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2.5 bg-[#E7F1ED] text-[#226B54] px-4 py-3 rounded-[10px] text-[13px] font-medium mt-3.5"
+                className="flex items-start gap-3 bg-gradient-to-r from-[#fdf0f5] to-[#f3eaff] border border-[#e8c8d8] px-4 py-3.5 rounded-[10px] mt-3.5"
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C13584" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-px">
                   <path d="m5 12 5 5L20 7"/>
                 </svg>
-                Abriendo WhatsApp con tu mensaje listo…
+                <div>
+                  <p className="text-[13px] font-semibold text-[#8134af]">¡Mensaje copiado!</p>
+                  <p className="text-[12px] text-[#a06070] mt-0.5">Instagram se abrió — solo pega el mensaje en el chat (Ctrl+V / ⌘V).</p>
+                </div>
               </motion.div>
             )}
 

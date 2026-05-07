@@ -39,7 +39,7 @@ export default function Footer() {
             <h4 className="font-sans text-[12px] font-semibold tracking-[0.18em] uppercase text-white mb-[18px]">Contacto</h4>
             <ul className="flex flex-col gap-2.5 text-sm list-none">
               <li><a href="tel:+18098502143" className="hover:text-white transition-colors">+1 809 850 2143</a></li>
-              <li><a href="https://wa.me/18098502143" target="_blank" rel="noopener" className="hover:text-white transition-colors">WhatsApp</a></li>
+              <li><a href="https://ig.me/m/pethospitalrd" target="_blank" rel="noopener" className="hover:text-white transition-colors">Instagram</a></li>
               <li className="text-white/55 text-[13px] mt-1.5 leading-[1.6]">Calle 3, esq. Onésimo<br/>Jiménez, Los Jardines<br/>Metropolitanos, Santiago</li>
             </ul>
           </div>
@@ -73,11 +73,13 @@ export default function Footer() {
                   ),
                 },
                 {
-                  href: "https://wa.me/18098502143",
-                  label: "WhatsApp",
+                  href: "https://ig.me/m/pethospitalrd",
+                  label: "DM",
                   icon: (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.4-1.5-.9-.8-1.5-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.7.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.7.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3z M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.1-1.3c1.4.8 3.1 1.3 4.9 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      {/* Instagram DM / paper plane variant */}
+                      <path d="M22 2L11 13"/>
+                      <path d="M22 2L15 22l-4-9-9-4 20-7z"/>
                     </svg>
                   ),
                 },
